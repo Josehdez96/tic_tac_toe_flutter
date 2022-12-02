@@ -1,30 +1,66 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/main.dart';
+import 'package:tic_tac_toe/provider/tic_tac_toe_provider.dart';
+
+String tappedBoxReturn = 'Winner!!';
+
+class MockTicTacToeProvider extends Mock implements TicTacToeProvider {
+  @override
+  int get filledBoxes => 9;
+
+  @override
+  String? tappedBox(int index) {
+    return tappedBoxReturn;
+  }
+
+  @override
+  String showTurn(int index) {
+    return 'O';
+  }
+}
 
 void main() {
-  // testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-  //   // Build our app and trigger a frame.
-  //   await tester.pumpWidget(const MyApp());
+  late MockTicTacToeProvider mockTicTacToeProvider;
 
-  //   // Verify that our counter starts at 0.
-  //   expect(find.text('0'), findsOneWidget);
-  //   expect(find.text('1'), findsNothing);
+  setUp(() {
+    mockTicTacToeProvider = MockTicTacToeProvider();
+  });
 
-  //   // Tap the '+' icon and trigger a frame.
-  //   await tester.tap(find.byIcon(Icons.add));
-  //   await tester.pump();
+  Widget createWidgetUnderTest() {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<TicTacToeProvider>(
+          create: ((_) => mockTicTacToeProvider),
+        )
+      ],
+      child: const MaterialApp(home: MainScreen()),
+    );
+  }
 
-  //   // Verify that our counter has incremented.
-  //   expect(find.text('0'), findsNothing);
-  //   expect(find.text('1'), findsOneWidget);
-  // });
+  testWidgets('MultiProvider should exist', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    expect(find.byType(MultiProvider), findsOneWidget);
+  });
+
+  testWidgets('FractionallySizedBox should exist', (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+    expect(find.byType(FractionallySizedBox), findsOneWidget);
+  });
+
+  testWidgets('Show draw dialog', (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.tap(find.byKey(const ValueKey('gesture-detector-key-1')));
+    await tester.pumpAndSettle();
+    expect(find.text('We have a draw!'), findsOneWidget);
+  });
+
+  testWidgets('Show winner dialog', (WidgetTester tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.tap(find.byKey(const ValueKey('gesture-detector-key-1')));
+    await tester.pumpAndSettle();
+    expect(find.text(tappedBoxReturn), findsOneWidget);
+  });
 }
