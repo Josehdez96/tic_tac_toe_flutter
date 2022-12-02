@@ -16,9 +16,11 @@ class TicTacToeProvider extends ChangeNotifier {
   ];
 
   String? tappedBox(int index) {
-    displayElements[index] = oTurn;
-    filledBoxes++;
-    _changeTurn();
+    if (displayElements[index] == null) {
+      displayElements[index] = oTurn;
+      _changeTurn();
+      filledBoxes++;
+    }
     if (_checkWinner()) {
       String savedWinnerMessage =
           'The winner of this match is ${displayElements[index]! ? 'X' : 'O'}!!';
