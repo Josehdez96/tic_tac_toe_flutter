@@ -1,17 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:tic_tac_toe/provider/tic_tac_toe_provider.dart';
-
-class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   late TicTacToeProvider sut;
-  late MockBuildContext mockContext;
 
   setUp(() {
     sut = TicTacToeProvider();
-    mockContext = MockBuildContext();
   });
 
   test('initial values are correct', () {
@@ -25,7 +19,7 @@ void main() {
     test('tappedBox should assing a list element and sum +1 to filledBoxes',
         () {
       const int index = 0;
-      sut.tappedBox(mockContext, index);
+      sut.tappedBox(index);
       expect(sut.displayElements[index], true);
       expect(sut.filledBoxes, 1);
     });
@@ -34,8 +28,7 @@ void main() {
       const int indexToWin = 2;
       sut.displayElements[0] = true;
       sut.displayElements[1] = true;
-      expect(sut.tappedBox(mockContext, indexToWin),
-          'The winner of this match is X!!');
+      expect(sut.tappedBox(indexToWin), 'The winner of this match is X!!');
       expect(sut.filledBoxes, 0);
     });
   });
