@@ -15,16 +15,18 @@ class TicTacToeProvider extends ChangeNotifier {
     null
   ];
 
-  void tappedBox(BuildContext context, int index) {
+  String? tappedBox(BuildContext context, int index) {
     displayElements[index] = oTurn;
     filledBoxes++;
     _changeTurn();
-    _checkDraw(context);
     if (_checkWinner()) {
-      _showDialog(context,
-          'The winner of this match is ${displayElements[index]! ? 'X' : 'O'}!!');
+      String savedWinnerMessage =
+          'The winner of this match is ${displayElements[index]! ? 'X' : 'O'}!!';
+      _clearBoard();
+      return savedWinnerMessage;
     }
     notifyListeners();
+    return null;
   }
 
   String showTurn(int index) {
@@ -49,12 +51,6 @@ class TicTacToeProvider extends ChangeNotifier {
     }
   }
 
-  void _checkDraw(BuildContext context) {
-    if (filledBoxes == 9) {
-      _showDialog(context, 'We have a draw!');
-    }
-  }
-
   bool _checkWinner() {
     if (_checkRowsWinner() ||
         _checkColumnsWinner() ||
@@ -64,23 +60,6 @@ class TicTacToeProvider extends ChangeNotifier {
       return true;
     }
     return false;
-  }
-
-  void _showDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(message, textAlign: TextAlign.center),
-        actions: [
-          TextButton(
-              onPressed: () {
-                _clearBoard();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Play again'))
-        ],
-      ),
-    );
   }
 
   void _clearBoard() {

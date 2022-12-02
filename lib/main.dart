@@ -43,7 +43,15 @@ class MainScreen extends StatelessWidget {
             ),
             itemBuilder: ((context, index) => GestureDetector(
                   onTap: () {
-                    ticTacToeProvider.tappedBox(context, index);
+                    if (ticTacToeProvider.filledBoxes == 9) {
+                      showCustomDialog(context, 'We have a draw!');
+                    }
+
+                    String? winnerMessage =
+                        ticTacToeProvider.tappedBox(context, index);
+                    if (winnerMessage != null) {
+                      showCustomDialog(context, winnerMessage);
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -60,6 +68,23 @@ class MainScreen extends StatelessWidget {
                 )),
           ),
         ),
+      ),
+    );
+  }
+
+  showCustomDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(message, textAlign: TextAlign.center),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Play again'),
+          )
+        ],
       ),
     );
   }
