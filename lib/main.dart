@@ -42,13 +42,13 @@ class MainScreen extends StatelessWidget {
               crossAxisCount: 3,
             ),
             itemBuilder: ((context, index) => GestureDetector(
+                  key: ValueKey('gesture-detector-key-$index'),
                   onTap: () {
                     if (ticTacToeProvider.filledBoxes == 9) {
                       showCustomDialog(context, 'We have a draw!');
                     }
 
-                    String? winnerMessage =
-                        ticTacToeProvider.tappedBox(context, index);
+                    String? winnerMessage = ticTacToeProvider.tappedBox(index);
                     if (winnerMessage != null) {
                       showCustomDialog(context, winnerMessage);
                     }

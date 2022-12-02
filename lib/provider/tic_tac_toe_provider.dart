@@ -15,7 +15,7 @@ class TicTacToeProvider extends ChangeNotifier {
     null
   ];
 
-  String? tappedBox(BuildContext context, int index) {
+  String? tappedBox(int index) {
     displayElements[index] = oTurn;
     filledBoxes++;
     _changeTurn();
